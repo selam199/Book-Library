@@ -1,16 +1,75 @@
-# React + Vite
+# 📚 Book Library
+A simple Book Library application built with **React** and **Tailwind CSS**. The app allows users to search for books and view details using the **Open Library API**.
+---
+## 🚀 Quick Setup (Vite + Tailwind)
+1. Create a new Vite + React project:
+```bash
+npm create vite@latest book-library -- --template react
+cd book-library
+```
+2. Install dependencies:
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+```bash
+npm install
+```
+3. Install Tailwind CSS:
+```bash
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+```
+4. Configure Tailwind:
+   Edit **`tailwind.config.cjs`** and set:
+```js
+content: ["./index.html","./src/**/*.{js,jsx,ts,tsx}"],
+```
+5. Add Tailwind to CSS:
+   In **`src/index.css`**, add:
 
-Currently, two official plugins are available:
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+6. Replace the app component:
+   Place your Book Library component as **`src/App.jsx`**. Ensure **`src/main.jsx`** imports:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```
+7. Run the project:
 
-## React Compiler
+```bash
+npm run dev
+```
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 📖 Features
 
-## Expanding the ESLint configuration
+* 🔍 Search for books by title, author, or keyword
+* 📑 View detailed book information (cover, description, publisher, subjects, etc.)
+* 📱 Responsive UI with Tailwind CSS
+* ⚡ Fast dev environment using Vite
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🛠 Tech Stack
+
+* [React](https://react.dev/)
+* [Vite](https://vitejs.dev/)
+* [Tailwind CSS](https://tailwindcss.com/)
+* [Open Library API](https://openlibrary.org/developers/api)
+
+---
+
+## 📌 Commit Convention
+
+This project follows [Conventional Commits](https://www.conventionalcommits.org/):
+
+* `feat:` → Add a new feature
+* `fix:` → Fix a bug
+* `chore:` → Setup/config changes (no user-facing effect)
+* `docs:` → Documentation updates
+
+---
+
+## 📜 License
+
+MIT License.
