@@ -34,8 +34,38 @@ content: ["./index.html","./src/**/*.{js,jsx,ts,tsx}"],
    Place your Book Library component as **`src/App.jsx`**. Ensure **`src/main.jsx`** imports:
 
 ```
-7. Run the project:
+# Components
 
+This directory contains reusable React components used throughout the application.
+
+## Component List
+
+### BookCard.jsx
+- Displays a book in card format with cover image, title, and author
+
+### BookDetails.jsx
+- Shows detailed information about a single book
+
+### BookList.jsx
+- Renders a grid/list of BookCard components
+
+### Loader.jsx
+- Loading spinner/placeholder component
+
+### NavBar.jsx
+- Main navigation header component
+
+### SearchBar.jsx
+- Search input component with debounced search
+
+# Services
+
+This directory contains API service modules and external service integrations.
+
+## Service Modules
+
+### openLibrary.js
+- Client for interacting with the Open Library API
 ```bash
 npm run dev
 ```
