@@ -38,12 +38,18 @@ const Navbar = () => {
         </ul>
 
         <div className="flex gap-3">
-          <button className="bg-primary text-white px-3 py-1 rounded hover:bg-blue-900">
+          <Link
+            to="/login"
+            className="bg-primary text-white px-3 py-1 rounded hover:bg-blue-900 transition-all duration-200"
+          >
             Login
-          </button>
-          <button className="bg-accent text-black px-3 py-1 rounded hover:bg-yellow-500">
+          </Link>
+          <Link
+            to="/signup"
+            className="bg-accent text-black px-3 py-1 rounded hover:bg-yellow-500 transition-all duration-200"
+          >
             Sign Up
-          </button>
+          </Link>
         </div>
       </div>
 
