@@ -33,7 +33,7 @@ const Home = () => {
         bestsellers.
       </p>
       <SearchBar query={query} setQuery={setQuery} onSearch={handleSearch} />
-      {loading ? <Loader /> : <BookList books={books} />}
+      {loading ? <Loader /> : <BookList books={books} />} 
     </div>
   );
 };

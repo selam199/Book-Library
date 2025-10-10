@@ -1,105 +1,114 @@
 # 📚 Book Library
-A simple Book Library application built with **React** and **Tailwind CSS**. The app allows users to search for books and view details using the **Open Library API**.
+
+A simple **Book Library** application built with **React** and **Tailwind CSS**. Users can search for books and view detailed information using the **Open Library API**.
+
 ---
+
 ## 🚀 Quick Setup (Vite + Tailwind)
-1. Create a new Vite + React project:
-```bash
-npm create vite@latest book-library -- --template react
-cd book-library
-```
-2. Install dependencies:
 
-```bash
-npm install
-```
-3. Install Tailwind CSS:
-```bash
-npm install -D tailwindcss postcss autoprefixer
-npx tailwindcss init -p
-```
-4. Configure Tailwind:
-   Edit **`tailwind.config.cjs`** and set:
-```js
-content: ["./index.html","./src/**/*.{js,jsx,ts,tsx}"],
-```
-5. Add Tailwind to CSS:
-   In **`src/index.css`**, add:
+1. **Create a new Vite + React project**:
+   ```bash
+   npm create vite@latest book-library -- --template react
+   cd book-library
+````
+2. **Install dependencies**:
 
-```css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-```
-6. Replace the app component:
-   Place your Book Library component as **`src/App.jsx`**. Ensure **`src/main.jsx`** imports:
+   ```bash
+   npm install
+   ```
+3. **Install Tailwind CSS**:
+   ```bash
+   npm install -D tailwindcss postcss autoprefixer
+   npx tailwindcss init -p
+   ```
+4. **Configure Tailwind**
+   Edit `tailwind.config.cjs`:
+   ```js
+   content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
+   ```
+5. **Add Tailwind to CSS**
+   In `src/index.css`, add:
+   ```css
+   @tailwind base;
+   @tailwind components;
+   @tailwind utilities;
+   ```
+6. **Replace the App component**
+   Place your Book Library component in `src/App.jsx` and ensure `src/main.jsx` imports it.
+7. **Start the development server**:
+   ```bash
+   npm run dev
+   ```
+---
+## 📂 Project Structure
 
-```
-# Components
+BOOK-LIBRARY/
+ ├── node_modules/
+ ├── public/
+ ├── src/
+ │   ├── assets/                  # Static assets (images, icons, etc.)
+ │   ├── components/
+ │   │   ├── BookCard.jsx          # Displays book cover, title, and author
+ │   │   ├── BookDetails.jsx       # Shows detailed info for a single book
+ │   │   ├── BookList.jsx          # Renders grid/list of BookCard components
+ │   │   ├── Loader.jsx            # Loading spinner component
+ │   │   ├── NavBar.jsx            # Top navigation header
+ │   │   └── SearchBar.jsx         # Search input with onSearch handler
+ │   ├── pages/
+ │   │   ├── BookSearchResult.jsx  # Shows search results
+ │   │   ├── Browse.jsx            # Browse all books
+ │   │   ├── Details.jsx           # Book details page
+ │   │   ├── Home.jsx              # Homepage with search bar
+ │   │   ├── Login.jsx             # User login page
+ │   │   ├── MyBooks.jsx           # User saved books page
+ │   │   └── SignUp.jsx            # User registration page
+ │   ├── services/
+ │   │   ├── openLibrary.js        # API client for Open Library
+ │   ├── App.jsx                   # Main routing and page navigation
+ │   ├── App.css                   # Global styles
+ │   ├── index.css                 # Tailwind CSS imports
+ │   └── main.jsx                  # React entry point
+ ├── .gitignore
+ ├── package.json
+ ├── package-lock.json
+ ├── postcss.config.js
+ └── index.html
 
-This directory contains reusable React components used throughout the application.
 
-## Component List
-
-### BookCard.jsx
-- Displays a book in card format with cover image, title, and author
-
-### BookDetails.jsx
-- Shows detailed information about a single book
-
-### BookList.jsx
-- Renders a grid/list of BookCard components
-
-### Loader.jsx
-- Loading spinner/placeholder component
-
-### NavBar.jsx
-- Main navigation header component
-
-### SearchBar.jsx
-- Search input component with debounced search
-
-# Services
-
-This directory contains API service modules and external service integrations.
-
-## Service Modules
-
-### openLibrary.js
-- Client for interacting with the Open Library API
-```bash
-npm run dev
-```
 ---
 
 ## 📖 Features
 
-* 🔍 Search for books by title, author, or keyword
-* 📑 View detailed book information (cover, description, publisher, subjects, etc.)
-* 📱 Responsive UI with Tailwind CSS
-* ⚡ Fast dev environment using Vite
-
+🔍 Search for books by title, author, or keyword
+📚 Browse and view detailed information about books
+🧭 Navigation between multiple pages using React Router DOM
+⏳ Loader and “No books found” feedback
+📱 Fully responsive UI with Tailwind CSS
+🔑 User authentication (Sign Up, Login, Sign Out)
+🧾 User dashboard / saved books in MyBooks.jsx
 ---
 
 ## 🛠 Tech Stack
 
-* [React](https://react.dev/)
-* [Vite](https://vitejs.dev/)
-* [Tailwind CSS](https://tailwindcss.com/)
-* [Open Library API](https://openlibrary.org/developers/api)
+⚛️ React
+🚀 Vite
+🎨 Tailwind CSS
+🌐 React Router DOM
+📚 Open Library API
 
 ---
-
 ## 📌 Commit Convention
 
 This project follows [Conventional Commits](https://www.conventionalcommits.org/):
 
 * `feat:` → Add a new feature
 * `fix:` → Fix a bug
-* `chore:` → Setup/config changes (no user-facing effect)
+* `chore:` → Setup/config changes
 * `docs:` → Documentation updates
 
 ---
-
 ## 📜 License
+MIT License
 
-MIT License.
+✨ Summary:
+The Book Library App supports multiple pages (Home, Browse, Details, Search Results, MyBooks, Login/SignUp) and allows users to search, explore, and manage book collections with responsive navigation and authentication support.

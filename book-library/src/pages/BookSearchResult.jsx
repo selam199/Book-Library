@@ -1,10 +1,10 @@
 import { useLocation } from "react-router-dom";
 import BookList from "../components/BookList";
+import Loader from "../components/Loader";
 
-const Books = () => {
+const BookSearchResult = () => {
   const location = useLocation();
   const { books = [], query = "" } = location.state || {};
-
   return (
     <div className="px-6 py-8 max-w-7xl mx-auto">
       <h2 className="text-center font-bold text-2xl md:text-4xl mb-6">
@@ -21,16 +21,15 @@ const Books = () => {
         </p>
       )}
 
-      {/* ✅ If there are no books, show message instead of redirecting */}
       {books.length === 0 ? (
         <p className="text-center text-gray-500 mt-10 text-lg font-medium">
           No books found.
         </p>
       ) : (
-        <BookList books={books} />
+         <BookList books={books} />
       )}
     </div>
   );
 };
 
-export default Books;
+export default BookSearchResult;
