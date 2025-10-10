@@ -1,8 +1,21 @@
 import BookCard from "./BookCard";
+import { useLocation } from "react-router-dom";
 
-const BookList = ({ books }) => {
-  if (!books || books.length === 0) {
-    return <p className="text-center text-gray-500 mt-6">No books found.</p>;
+const BookList = ({ books: propBooks }) => {
+  const location = useLocation();
+  
+  //  First, check if books were passed via location.state (when navigating)
+  const stateBooks = location.state?.books;
+
+  //  Prefer stateBooks if available, otherwise use propBooks
+  const books = stateBooks || propBooks || [];
+
+  if (!books.length) {
+    return (
+      <p className="text-center text-gray-500 mt-6">
+        No books found.
+      </p>
+    );
   }
 
   return (
@@ -15,3 +28,4 @@ const BookList = ({ books }) => {
 };
 
 export default BookList;
+

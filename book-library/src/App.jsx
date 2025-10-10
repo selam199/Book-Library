@@ -6,7 +6,7 @@ import MyBooks from "./pages/MyBooks";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Details from "./pages/Details";
-
+import BookSearchResult from "./pages/BookSearchResult";
 function App() {
   return (
     <Router>
@@ -18,10 +18,10 @@ function App() {
         <Route path="/my-books" element={<MyBooks />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/books" element={<BookSearchResult />} />
       </Routes>
     </Router>
   );
 }
 
 export default App;
-

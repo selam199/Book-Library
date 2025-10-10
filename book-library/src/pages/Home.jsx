@@ -1,19 +1,26 @@
-import { useState } from "react";
+ import { useState } from "react";
 import SearchBar from "../components/SearchBar";
 import BookList from "../components/BookList";
 import Loader from "../components/Loader";
 import { searchBooks } from "../services/openLibrary";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [query, setQuery] = useState("");
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  
 
   const handleSearch = async () => {
     setLoading(true);
     const results = await searchBooks(query);
     setBooks(results);
     setLoading(false);
+
+    navigate("/books", {
+      state: { books:results, query}
+    });
   };
 
   return (
@@ -32,3 +39,5 @@ const Home = () => {
 };
 
 export default Home;
+
+
