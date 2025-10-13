@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import BookList from "../components/BookList";
-import Loader from "../components/Loader";
+
 
 const BookSearchResult = () => {
   const location = useLocation();

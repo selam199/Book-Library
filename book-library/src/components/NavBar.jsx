@@ -26,11 +26,6 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
-            <Link to="/browse" className="hover:text-primary">
-              Browse
-            </Link>
-          </li>
-          <li>
             <Link to="/my-books" className="hover:text-primary">
               My Books
             </Link>
@@ -69,13 +64,6 @@ const Navbar = () => {
           onClick={() => setIsOpen(false)}
         >
           Home
-        </Link>
-        <Link
-          to="/browse"
-          className="hover:text-primary"
-          onClick={() => setIsOpen(false)}
-        >
-          Browse
         </Link>
         <Link
           to="/my-books"
