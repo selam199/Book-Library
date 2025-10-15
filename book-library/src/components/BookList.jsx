@@ -1,13 +1,11 @@
 import BookCard from "./BookCard";
-import { useLocation } from "react-router-dom";
+import { useLocation, Link } from "react-router-dom";
 
 const BookList = ({ books: propBooks }) => {
   const location = useLocation();
   
-  //  First, check if books were passed via location.state (when navigating)
+  // Prefer books from location.state if available
   const stateBooks = location.state?.books;
-
-  //  Prefer stateBooks if available, otherwise use propBooks
   const books = stateBooks || propBooks || [];
 
   if (!books.length) {
@@ -21,11 +19,18 @@ const BookList = ({ books: propBooks }) => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-6">
       {books.map((book) => (
-        <BookCard key={book.key} book={book} />
+        <Link
+          key={book.key || book.id}
+          to="/book-details"
+          state={{ book }} // pass the book to BookDetails
+        >
+          <BookCard book={book} />
+        </Link>
       ))}
     </div>
   );
 };
 
 export default BookList;
+
 

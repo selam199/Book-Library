@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../authService"; 
+import { login } from "../authService";
+import { auth } from "../firebaseConfig";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -20,10 +21,12 @@ const Login = () => {
     }
 
     try {
-      const user = await login(email, password);
+      const userCredential = await login(email, password);
+      const user = userCredential.user;
+
       setSuccess("Login successful! Redirecting...");
-      console.log("Logged in user:", user);
-      setTimeout(() => navigate("/my-books"), 1500); 
+
+      setTimeout(() => navigate("/my-books"), 1500);
     } catch (err) {
       setError(err.message);
     }
@@ -37,7 +40,9 @@ const Login = () => {
         className="bg-white shadow-md rounded-lg p-8 w-full max-w-md"
       >
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-        {success && <p className="text-green-600 text-center mb-4">{success}</p>}
+        {success && (
+          <p className="text-green-600 text-center mb-4">{success}</p>
+        )}
 
         <input
           type="email"

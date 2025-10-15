@@ -1,6 +1,9 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../firebaseConfig";
+import { auth, db } from "../firebaseConfig";
+import { collection, doc, getDocs, setDoc, updateDoc } from "firebase/firestore";
+import BookCard from "../components/BookCard";
 
 const MyBooks = () => {
   const navigate = useNavigate();
@@ -13,23 +16,33 @@ const MyBooks = () => {
       return;
     }
 
-    const fetchBooks = async () => {
-      try {
-        // Example: fetch books on "fantasy" subject, limit 9
-        const response = await fetch(
-          "https://openlibrary.org/subjects/fantasy.json?limit=9"
-        );
-        const data = await response.json();
-        setBooks(data.works);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching books:", error);
-        setLoading(false);
-      }
+    const fetchReadingList = async () => {
+      const readingListRef = collection(db, "users", auth.currentUser.uid, "readingList");
+      const snapshot = await getDocs(readingListRef);
+      const list = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setBooks(list);
+      setLoading(false);
     };
 
-    fetchBooks();
+    fetchReadingList();
   }, [navigate]);
+
+  // Add book to reading list
+  const addBook = async (book) => {
+    if (!auth.currentUser) return alert("Login to save books");
+    const bookRef = doc(collection(db, "users", auth.currentUser.uid, "readingList"));
+    await setDoc(bookRef, { ...book, status: "Want to Read", addedAt: new Date() });
+    setBooks((prev) => [...prev, { id: bookRef.id, ...book, status: "Want to Read" }]);
+  };
+
+
+  const handleStatusChange = async (bookId, status) => {
+    const bookRef = doc(db, "users", auth.currentUser.uid, "readingList", bookId);
+    await updateDoc(bookRef, { status });
+    setBooks((prevBooks) =>
+      prevBooks.map((b) => (b.id === bookId ? { ...b, status } : b))
+    );
+  };
 
   if (!auth.currentUser) return null;
 
@@ -39,35 +52,32 @@ const MyBooks = () => {
       <p className="text-lg mb-6">Welcome, {auth.currentUser.email}</p>
 
       {loading ? (
-        <p>Loading books...</p>
+        <p>Loading reading list...</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-5xl">
-          {books.map((book) => (
-            <div
-              key={book.key}
-              className="border p-4 rounded shadow hover:shadow-lg transition flex flex-col items-center"
-            >
-              {book.cover_id && (
-                <img
-                  src={`https://covers.openlibrary.org/b/id/${book.cover_id}-M.jpg`}
-                  alt={book.title}
-                  className="mb-4 w-32 h-48 object-cover rounded"
-                />
-              )}
-              <h2 className="text-xl font-bold text-center">{book.title}</h2>
-              {book.authors && (
-                <p className="text-gray-700 mt-1 text-center">
-                  Author: {book.authors.map((a) => a.name).join(", ")}
-                </p>
-              )}
-              {book.publishers && (
-                <p className="text-gray-600 mt-1 text-center">
-                  Publisher: {book.publishers.join(", ")}
-                </p>
-              )}
+        <>
+          {books.length === 0 ? (
+            <p>No books in your reading list yet.</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-5xl">
+              {books.map((book) => (
+                <BookCard key={book.id} book={book} onStatusChange={handleStatusChange} />
+              ))}
             </div>
-          ))}
-        </div>
+          )}
+          <button
+            onClick={() =>
+              addBook({
+                title: "1984",
+                authors: ["George Orwell"],
+                publisher: "Secker & Warburg",
+                coverId: 7222246,
+              })
+            }
+            className="mt-6 bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-800 transition"
+          >
+            Add Sample Book
+          </button>
+        </>
       )}
     </div>
   );

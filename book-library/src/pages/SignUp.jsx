@@ -1,7 +1,9 @@
-// src/pages/SignUp.jsx
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signup } from "../authService"; // Import signup function from authService.js
+import { signup } from "../authService"; 
+import { db } from "../firebaseConfig";
+import { doc, setDoc } from "firebase/firestore";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -22,10 +24,19 @@ const SignUp = () => {
     }
 
     try {
-      const user = await signup(email, password);
+      // Sign up with Firebase Auth
+      const userCredential = await signup(email, password);
+      const user = userCredential.user;
+
+      // Save user data to Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        fullName,
+        email,
+        createdAt: new Date(),
+      });
+
       setSuccess("Account created successfully!");
-      console.log("Signed up user:", user);
-      setTimeout(() => navigate("/login"), 1500); 
+      setTimeout(() => navigate("/login"), 1500);
     } catch (err) {
       setError(err.message);
     }

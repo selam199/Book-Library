@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Loader from "../components/Loader";
-import BookDetails from "../components/BookDetails";
+import BookDetails from "./BookDetails";
 import { fetchBookDetails } from "../services/openLibrary";
 
 const Details = () => {

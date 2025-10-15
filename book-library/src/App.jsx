@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Details from "./pages/Details";
 import BookSearchResult from "./pages/BookSearchResult";
+import BookDetails from "./pages/BookDetails";
 function App() {
   return (
     <Router>
@@ -17,6 +18,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/books" element={<BookSearchResult />} />
+        <Route path="/book-details" element={<BookDetails />} />
       </Routes>
     </Router>
   );
