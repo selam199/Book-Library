@@ -1,15 +1,44 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { auth } from "../firebaseConfig";
+import { logout } from "../authService";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setCurrentUser(user);
+    });
+    return unsubscribe;
+  }, []);
+
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    setCurrentUser(null);
+    setMessage("You have successfully logged out.");
+    setTimeout(() => setMessage(""), 3000);
+    navigate("/");
+  };
 
   return (
     <nav className="bg-white shadow-md px-6 py-4 flex items-center justify-between relative">
       {/* Logo */}
       <h1 className="text-2xl font-bold text-primary">Books Library</h1>
 
-      {/* Hamburger Icon (Mobile Only) */}
+      {/* Logout message */}
+      {message && (
+        <div className="absolute top-16 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded">
+          {message}
+        </div>
+      )}
+
+      {/* Hamburger Icon */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="md:hidden text-gray-700 focus:outline-none text-2xl"
@@ -33,22 +62,33 @@ const Navbar = () => {
         </ul>
 
         <div className="flex gap-3">
-          <Link
-            to="/login"
-            className="bg-primary text-white px-3 py-1 rounded hover:bg-blue-900 transition-all duration-200"
-          >
-            Login
-          </Link>
-          <Link
-            to="/signup"
-            className="bg-accent text-black px-3 py-1 rounded hover:bg-yellow-500 transition-all duration-200"
-          >
-            Sign Up
-          </Link>
+          {currentUser ? (
+            <button
+              onClick={handleLogout}
+              className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-all duration-200"
+            >
+              Logout
+            </button>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="bg-primary text-white px-3 py-1 rounded hover:bg-blue-900 transition-all duration-200"
+              >
+                Login
+              </Link>
+              <Link
+                to="/signup"
+                className="bg-accent text-black px-3 py-1 rounded hover:bg-yellow-500 transition-all duration-200"
+              >
+                Sign Up
+              </Link>
+            </>
+          )}
         </div>
       </div>
 
-      {/* Mobile Menu (Animated Slide Down) */}
+      {/* Mobile Menu */}
       <div
         className={`absolute top-16 left-0 w-full bg-white shadow-md flex flex-col items-center gap-4 py-6 
         transition-all duration-300 ease-in-out 
@@ -73,12 +113,34 @@ const Navbar = () => {
           My Books
         </Link>
 
-        <button className="bg-primary text-white px-3 py-1 rounded hover:bg-blue-900">
-          Login
-        </button>
-        <button className="bg-accent text-black px-3 py-1 rounded hover:bg-yellow-500">
-          Sign Up
-        </button>
+        {currentUser ? (
+          <button
+            onClick={() => {
+              handleLogout();
+              setIsOpen(false);
+            }}
+            className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 w-full"
+          >
+            Logout
+          </button>
+        ) : (
+          <>
+            <Link
+              to="/login"
+              onClick={() => setIsOpen(false)}
+              className="bg-primary text-white px-3 py-1 rounded hover:bg-blue-900 w-full text-center"
+            >
+              Login
+            </Link>
+            <Link
+              to="/signup"
+              onClick={() => setIsOpen(false)}
+              className="bg-accent text-black px-3 py-1 rounded hover:bg-yellow-500 w-full text-center"
+            >
+              Sign Up
+            </Link>
+          </>
+        )}
       </div>
     </nav>
   );
