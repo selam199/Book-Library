@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { auth } from "../firebaseConfig";
-import { logout } from "../authService";
+import { auth } from "../services/firebaseConfig";
+import { logout } from "../services/authService";
 import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {

@@ -1,83 +1,156 @@
-
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { auth, db } from "../firebaseConfig";
-import { collection, doc, getDocs, setDoc, updateDoc } from "firebase/firestore";
-import BookCard from "../components/BookCard";
+import { useEffect, useState } from "react";
+import { db, auth } from "../services/firebaseConfig";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  deleteDoc,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 
 const MyBooks = () => {
-  const navigate = useNavigate();
-  const [books, setBooks] = useState([]);
+  const [myBooks, setMyBooks] = useState([]);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Track authentication state
   useEffect(() => {
-    if (!auth.currentUser) {
-      navigate("/login");
-      return;
-    }
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      if (currentUser) {
+        fetchMyBooks(currentUser.uid);
+      } else {
+        setMyBooks([]);
+        setLoading(false);
+      }
+    });
 
-    const fetchReadingList = async () => {
-      const readingListRef = collection(db, "users", auth.currentUser.uid, "readingList");
-      const snapshot = await getDocs(readingListRef);
-      const list = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setBooks(list);
+    return () => unsubscribe();
+  }, []);
+
+  // Fetch user-specific books
+  const fetchMyBooks = async (userId) => {
+    try {
+      const booksRef = collection(db, "myBooks");
+      const q = query(booksRef, where("userId", "==", userId));
+      const querySnapshot = await getDocs(q);
+
+      const books = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setMyBooks(books);
+    } catch (error) {
+      console.error("Error fetching books:", error);
+    } finally {
       setLoading(false);
-    };
-
-    fetchReadingList();
-  }, [navigate]);
-
-  // Add book to reading list
-  const addBook = async (book) => {
-    if (!auth.currentUser) return alert("Login to save books");
-    const bookRef = doc(collection(db, "users", auth.currentUser.uid, "readingList"));
-    await setDoc(bookRef, { ...book, status: "Want to Read", addedAt: new Date() });
-    setBooks((prev) => [...prev, { id: bookRef.id, ...book, status: "Want to Read" }]);
+    }
   };
 
+  // Remove book from Firestore
+  const handleRemoveBook = async (bookId) => {
+    try {
+      await deleteDoc(doc(db, "myBooks", bookId));
+      setMyBooks(myBooks.filter((book) => book.id !== bookId));
+    } catch (error) {
+      console.error("Error removing book:", error);
+    }
+  };
 
-  const handleStatusChange = async (bookId, status) => {
-    const bookRef = doc(db, "users", auth.currentUser.uid, "readingList", bookId);
-    await updateDoc(bookRef, { status });
-    setBooks((prevBooks) =>
-      prevBooks.map((b) => (b.id === bookId ? { ...b, status } : b))
+  // Update reading status
+  const handleStatusChange = async (bookId, newStatus) => {
+    try {
+      const bookRef = doc(db, "myBooks", bookId);
+      await updateDoc(bookRef, { status: newStatus });
+      setMyBooks((prevBooks) =>
+        prevBooks.map((b) =>
+          b.id === bookId ? { ...b, status: newStatus } : b
+        )
+      );
+    } catch (error) {
+      console.error("Error updating status:", error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="text-center mt-10 text-gray-600">
+        Loading your books...
+      </div>
     );
-  };
+  }
 
-  if (!auth.currentUser) return null;
+  if (!user) {
+    return (
+      <div className="text-center mt-10 text-gray-600">
+        Please log in to view your saved books.
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center px-4 py-8">
-      <h1 className="text-3xl font-bold mb-4">My Books</h1>
-      <p className="text-lg mb-6">Welcome, {auth.currentUser.email}</p>
+    <div className="max-w-6xl mx-auto px-6 py-10">
+      <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
+        📚 My Reading List
+      </h2>
 
-      {loading ? (
-        <p>Loading reading list...</p>
+      {myBooks.length === 0 ? (
+        <p className="text-gray-600 text-center">
+          You haven’t added any books yet. Browse and add some to your list!
+        </p>
       ) : (
-        <>
-          {books.length === 0 ? (
-            <p>No books in your reading list yet.</p>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-5xl">
-              {books.map((book) => (
-                <BookCard key={book.id} book={book} onStatusChange={handleStatusChange} />
-              ))}
+        <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {myBooks.map((book) => (
+            <div
+              key={book.id}
+              className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300 flex flex-col"
+            >
+              <img
+                src={
+                  book.coverImage ||
+                  `https://covers.openlibrary.org/b/id/${book.coverId}-L.jpg` ||
+                  "https://via.placeholder.com/200x300?text=No+Cover"
+                }
+                alt={book.title}
+                className="w-full h-60 object-cover"
+              />
+
+              <div className="p-4 flex flex-col flex-1">
+                <h3 className="text-lg font-semibold mb-1">{book.title}</h3>
+                <p className="text-sm text-gray-600 mb-1">
+                  {book.author || "Unknown Author"}
+                </p>
+                <p className="text-sm text-gray-500 mb-3">
+                  {book.publishedDate || "N/A"}
+                </p>
+
+                {/* Reading Progress Dropdown */}
+                <select
+                  value={book.status || "Want to Read"}
+                  onChange={(e) =>
+                    handleStatusChange(book.id, e.target.value)
+                  }
+                  className="mb-3 text-sm py-1 px-2 border rounded"
+                >
+                  <option value="Want to Read">Want to Read</option>
+                  <option value="Currently Reading">Currently Reading</option>
+                  <option value="Completed">Completed</option>
+                </select>
+
+                <button
+                  onClick={() => handleRemoveBook(book.id)}
+                  className="mt-auto bg-red-500 text-white text-sm font-medium py-2 px-4 rounded-md hover:bg-red-600 transition"
+                >
+                  Remove
+                </button>
+              </div>
             </div>
-          )}
-          <button
-            onClick={() =>
-              addBook({
-                title: "1984",
-                authors: ["George Orwell"],
-                publisher: "Secker & Warburg",
-                coverId: 7222246,
-              })
-            }
-            className="mt-6 bg-blue-900 text-white px-4 py-2 rounded hover:bg-blue-800 transition"
-          >
-            Add Sample Book
-          </button>
-        </>
+          ))}
+        </div>
       )}
     </div>
   );

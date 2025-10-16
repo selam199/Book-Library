@@ -1,8 +1,8 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signup } from "../authService"; 
-import { db } from "../firebaseConfig";
+import { signup } from "../services/authService"; 
+import { db } from "../services/firebaseConfig";
 import { doc, setDoc } from "firebase/firestore";
 
 const SignUp = () => {
